@@ -1,0 +1,30 @@
+{
+  "name": "fullstack-bloglist",
+  "version": "0.0.1",
+  "description": "Osa4 palautuksen backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teepiik/fullstack-bloglist.git"
+  },
+  "author": "teepiik",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/teepiik/fullstack-bloglist/issues"
+  },
+  "homepage": "https://github.com/teepiik/fullstack-bloglist#readme",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.0",
+    "express": "^4.16.2",
+    "mongoose": "^5.0.6"
+  },
+  "devDependencies": {
+    "nodemon": "^1.15.0"
+  }
+}
