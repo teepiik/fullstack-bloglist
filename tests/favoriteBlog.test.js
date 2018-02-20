@@ -64,4 +64,6 @@ describe('favorite blog', () => {
         const result = listHelper.favoriteBlog(empty)
         expect(result.likes).toBe(0)
     })
+
+    
 })

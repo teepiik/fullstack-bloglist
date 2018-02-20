@@ -4,9 +4,9 @@
   "description": "Osa4 palautuksen backend",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "watch": "nodemon index.js",
-    "test": "jest --verbose"
+    "start": "NODE_ENV=production node index.js",
+    "watch": "NODE_ENV=development nodemon index.js",
+    "test": "NODE_ENV=test jest --verbose"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "jest": "^22.3.0",
-    "nodemon": "^1.15.0"
+    "nodemon": "^1.15.0",
+    "supertest": "^3.0.0"
   }
 }
