@@ -21,7 +21,27 @@ const blogsInDb = async () => {
 }
 
 
+const titlesInDb = async () => {
+    const blogs = await Blog.find({})
+    console.log(blogs)
+    const titles = blogs.map(blog => blog.title)
+    return titles
+}
+
+const newBlogsId = async () => {
+    const testBlog = {
+        title: 'Test with id',
+        author: 'Test',
+        url: 'www.test.fi',
+        likes: 0
+    }
+    const blog = new Blog(testBlog)
+    await blog.save()  
+    return blog._id.toString()
+  }
+
+
 
 module.exports = {
-    initialBlogs, blogsInDb
+    initialBlogs, blogsInDb, titlesInDb, newBlogsId
   }

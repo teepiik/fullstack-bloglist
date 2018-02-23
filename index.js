@@ -7,8 +7,7 @@ const mongoose = require('mongoose')
 const blogRouter = require('./controllers/blogcontroller')
 const config = require('./utils/config')
 
-app.use(cors())
-app.use(bodyParser.json())
+
 
 mongoose
   .connect(config.mongoUrl)
@@ -20,7 +19,9 @@ mongoose
   })
 
 // ?
-mongoose.Promise = global.Promise
+//mongoose.Promise = global.Promise
+app.use(cors())
+app.use(bodyParser.json())
 app.use('/api/blogs', blogRouter)
 
 const server = http.createServer(app)
