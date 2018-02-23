@@ -38,4 +38,18 @@ usersRouter.post('/', async (request, response) => {
   }
 })
 
+const formatUser = (user) => {
+  return {
+    id: user.id,
+    username: user.username,
+    name: user.name,
+    adult: user.adult
+  }
+}
+
+usersRouter.get('/', async (request, response) => {
+  const users = await User.find({})
+  response.json(users.map(formatUser))
+})
+
 module.exports = usersRouter
