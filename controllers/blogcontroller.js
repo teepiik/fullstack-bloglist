@@ -1,6 +1,15 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+const getTokenFrom = (request) => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
+  }
+  return null
+}
 
 
 blogRouter.get('/', async (request, response) => {
@@ -14,6 +23,13 @@ blogRouter.post('/', async (request, response) => {
   try {
     const body = request.body
 
+    const token = getTokenFrom(request)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!token || !decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+
     if (body.title === undefined) {
       return response.status(400).json({ error: 'title missing' })
     }
@@ -23,11 +39,7 @@ blogRouter.post('/', async (request, response) => {
       return response.status(400).json({ error: 'url missing' })
     }
 
-    /*
-    const user = await User.findById(body.userId)
-    */
-    const users = await User.find({})
-    const user = users[0]
+    const user = await User.findById(decodedToken.id)
 
     const blog = new Blog({
       title: body.title,
@@ -47,8 +59,12 @@ blogRouter.post('/', async (request, response) => {
 
     response.status(201).json(Blog.format(savedBlog)) // ?????
   } catch (exception) {
-    console.log(exception)
-    response.status(500).json({ error: 'something went wrong' })
+    if (exception.name === 'JsonWebTokenError' ) {
+      response.status(401).json({ error: exception.message })
+    } else {
+      console.log(exception)
+      response.status(500).json({ error: 'something went wrong' })
+    }
   }
 })
 
@@ -73,6 +89,20 @@ blogRouter.get('/:id', async (request, response) => {
 
 blogRouter.delete('/:id', async (request, response) => {
   try {
+    const token = getTokenFrom(request)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!token || !decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+
+    const user = await User.findById(decodedToken.id)
+    const blogToDel = await Blog.findById(request.params.id)
+
+    if (blogToDel.user.toString() !== user.id.toString()) {
+      return response.status(401).json({ error: 'no permission' })
+    }
+
     await Blog.findByIdAndRemove(request.params.id)
     response.status(204).end()
 
