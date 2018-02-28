@@ -15,7 +15,7 @@ const getTokenFrom = (request) => {
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog
     .find({})
-    .populate('user' ,{ id:1, username: 1, name: 1 })
+    .populate('user', { id: 1, username: 1, name: 1 })
   response.json(blogs.map(Blog.format))
 })
 
@@ -39,6 +39,8 @@ blogRouter.post('/', async (request, response) => {
       return response.status(400).json({ error: 'url missing' })
     }
 
+
+
     const user = await User.findById(decodedToken.id)
 
     const blog = new Blog({
@@ -53,13 +55,17 @@ blogRouter.post('/', async (request, response) => {
       blog.likes = 0
     }
 
+    if (blog.user === undefined) {
+      user = null
+    }
+
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
 
     response.status(201).json(Blog.format(savedBlog)) // ?????
   } catch (exception) {
-    if (exception.name === 'JsonWebTokenError' ) {
+    if (exception.name === 'JsonWebTokenError') {
       response.status(401).json({ error: exception.message })
     } else {
       console.log(exception)
@@ -99,7 +105,7 @@ blogRouter.delete('/:id', async (request, response) => {
     const user = await User.findById(decodedToken.id)
     const blogToDel = await Blog.findById(request.params.id)
 
-    if (blogToDel.user.toString() !== user.id.toString()) {
+    if (blogToDel.user.toString() !== user.id.toString() && blogToDel.user !== null) {
       return response.status(401).json({ error: 'no permission' })
     }
 
@@ -121,7 +127,6 @@ blogRouter.put('/:id', async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes
-
   }
 
   try {
